@@ -1,11 +1,26 @@
-import fs, { readFileSync, writeFileSync, unlinkSync } from 'fs';
+import { S3Client } from '@aws-sdk/client-s3';
+import fs, {
+  readFileSync,
+  writeFileSync,
+  unlinkSync,
+  createWriteStream,
+} from 'fs';
 import { UUID } from 'mongodb';
 import { join } from 'path';
 import { FileTypeE } from 'src/files/file.interfaces';
 
 const PUBLICPATH = join(__dirname, '..', '..', '..', 'asset', 'public');
 const PRIVATEPATH = join(__dirname, '..', '..', '..', 'asset', 'private');
-Buffer;
+
+const s3 = new S3Client({
+  region: 'default',
+  endpoint: 's3.ir-thr-at1.arvanstorage.ir',
+  credentials: {
+    accessKeyId: 'b211b927-7f27-4996-9089-d451883fae25',
+    secretAccessKey:
+      '3602358e7b87df59442ebae7a9d15ac5ab2c7014d99ad6bbb97dc61432107d6b',
+  },
+});
 
 type where = 'public' | 'private';
 type TFormatToSave = '.webp' | '.mp4';
@@ -70,10 +85,16 @@ export class FileHelper {
     return unlinkSync(joinedPath);
   }
   static convetMimetypeToFormat(mimetype: string) {
-    if (mimetype.includes(FileTypeE.WEBP))
-      return ('.' + FileTypeE.WEBP) as TFormatToSave;
+    let value: TFormatToSave;
+    if (mimetype.includes(FileTypeE.WEBP)) value = '.' + FileTypeE.WEBP;
 
     if (mimetype.includes(FileTypeE.MP4))
-      return ('.' + FileTypeE.MP4) as TFormatToSave;
+      value = ('.' + FileTypeE.MP4) as TFormatToSave;
+
+    return value;
+  }
+  static async createFile_2(buffer: Buffer) {
+    const fileStream = createWriteStream(buffer);
+    // fileStream.on()
   }
 }

@@ -9,10 +9,14 @@ import { FileTypeE } from './file.interfaces';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ConditionType, FilesDocument } from './entities/file.entity';
-import { ObjectId } from 'mongodb';
+import { ObjectId, UUID } from 'mongodb';
 import { FileHelper } from 'src/utilities/file';
 import { join } from 'path';
 import { ProductsService } from 'src/products/products.service';
+import { S3Client } from '@aws-sdk/client-s3';
+import Storage from 'src/services/Storage';
+import { StorageService } from './storage.service';
+import { Response } from 'express';
 
 const LIMIT_FILE = 10;
 let LIMIT_FILE_ERROR = new BadRequestException('Entity has more than 10 files');
@@ -22,29 +26,26 @@ export class FilesService {
   constructor(
     @InjectModel('files') private readonly fileModel: Model<FilesDocument>,
     private readonly productsService: ProductsService,
+    private readonly storageService: StorageService,
   ) {}
 
   async create(createFileDto: CreateFileDto, file: Express.Multer.File) {
-    // const count = await this.findByEntityIdAndCount(createFileDto.entityId);
-
     let count: number;
-    let savedName: string;
-    const format = FileHelper.convetMimetypeToFormat(file.mimetype);
+
+    const uniuqeName =
+      new UUID().toString() +
+      '.' +
+      this.storageService.getFormatFromMimtype(file.mimetype);
 
     if (createFileDto.entityType === 'product') {
       count = await this.productsService.ProductFileLenth(
         createFileDto.entityId,
       );
+
       if (count > LIMIT_FILE) throw LIMIT_FILE_ERROR;
 
-      savedName = FileHelper.where('public').craeteFile(format, file.buffer);
-
-      const result = await this.fileModel.create({
-        entityType: createFileDto.entityType,
-        name: savedName,
-      });
-
-      await this.productsService.pushFileId(createFileDto.entityId, result._id);
+      await this.storageService.add(file.buffer, uniuqeName);
+      await this.productsService.pushFileId(createFileDto.entityId, uniuqeName);
     }
   }
 
@@ -54,10 +55,8 @@ export class FilesService {
     });
   }
 
-  async findOne(id: string) {
-    const result = await this.fileModel.findById(id);
-    if (!result) throw new NotFoundException();
-    return result.name;
+  async findOne(name: string) {
+    return this.storageService.get(name);
   }
 
   findByEntityIdAndCount(entityId: string) {

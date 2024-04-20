@@ -28,13 +28,13 @@ export class AuthService {
   }
   async createUser(user: SignInDto) {
     const { email, password, username } = user;
-    // const findedUser = await this.usersService.findOne({ username });
-    // const userWithEmail = await this.usersService.findOne({ email });
+    const findedUser = await this.usersService.findOne({ username });
+    const userWithEmail = await this.usersService.findOne({ email });
 
-    // if (findedUser)
-    //   throw new BadRequestException('The username already exists');
-    // if (userWithEmail)
-    //   throw new BadRequestException('The email already exists');
+    if (findedUser)
+      throw new BadRequestException('The username already exists');
+    if (userWithEmail)
+      throw new BadRequestException('The email already exists');
 
     const hashedPassword = this.hashPassword(password);
     const createdUser = await this.usersService.create({

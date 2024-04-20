@@ -51,8 +51,8 @@ export class FilesController {
 
   @Get(':fileId')
   async findOne(@Param('fileId') fileId: string, @Res() res: Response) {
-    const fileName = await this.filesService.findOne(fileId);
+    const url = await this.filesService.findOne(fileId);
 
-    res.sendFile(PUBLICPATH + '/' + fileName);
+    res.json({ url });
   }
 }

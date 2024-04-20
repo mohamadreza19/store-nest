@@ -41,14 +41,14 @@ export class ProductsService {
 
     return result.files.length;
   }
-  async pushFileId(_id: string, fileId: ObjectId) {
+  async pushFileId(_id: string, uniuqeName: string) {
     return await this.productModel.updateOne(
       {
         _id,
       },
       {
         $push: {
-          files: fileId,
+          files: uniuqeName,
         },
       },
     );

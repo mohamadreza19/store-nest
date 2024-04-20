@@ -19,21 +19,16 @@ import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     MongooseModule.forRoot(process.env.MONGODB_URI, {
       connectionErrorFactory(error) {
         console.log(error);
         throw error;
       },
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'asset', 'public'),
-      serveRoot: '/public',
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'asset', 'private'),
-      serveRoot: '/private',
-    }),
+
     FilesModule,
     UsersModule,
     ProductsModule,
