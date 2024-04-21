@@ -40,3 +40,5 @@ export class CreateFileDto {
   @IsObjectId()
   entityId: string;
 }
+export class UpdateFileDto extends CreateFileDto {}
+export class RemoveFileDto extends CreateFileDto {}

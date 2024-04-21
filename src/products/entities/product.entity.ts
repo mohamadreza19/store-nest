@@ -16,8 +16,8 @@ export class Products {
   @Prop({ required: true })
   price: number;
 
-  @Prop({ default: [], type: Types.ObjectId, ref: 'files' })
-  files: Types.ObjectId[];
+  @Prop({ type: [String], default: [] })
+  files: string[];
 
   @Prop()
   off_price: number;

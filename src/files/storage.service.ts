@@ -16,8 +16,12 @@ import { ProductsService } from 'src/products/products.service';
 import {
   GetObjectCommand,
   PutObjectCommand,
+  DeleteObjectCommand,
   S3Client,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3';
+import client from '@aws-sdk/client-s3';
+
 import Storage from 'src/services/Storage';
 import { Response } from 'express';
 
@@ -53,6 +57,23 @@ export class StorageService {
     // const result = await this.s3.send(new GetObjectCommand(param));
     // console.log(result.Body);
     return process.env.STORAGE_ENDPOINT_TOFILE + '/' + name;
+  }
+  async delete(name: string) {
+    await this.s3.send(
+      new HeadObjectCommand({
+        Bucket: process.env.BUCKET,
+        Key: name,
+        // VersionId: 'versionId',
+      }),
+    );
+
+    return this.s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.BUCKET,
+        Key: name,
+        // VersionId: 'version2.2',
+      }),
+    );
   }
   getFormatFromMimtype(fileMimetype: string) {
     return fileMimetype.split('/')[1];

@@ -48,6 +48,7 @@ export class ProductsController {
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(+id, updateProductDto);
   }
+
   @UseGuards(AuthGuard)
   @Delete(':id')
   @ApiBearerAuth()

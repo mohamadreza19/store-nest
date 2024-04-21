@@ -3,9 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateFileDto } from './dto/create-file.dto';
-import { UpdateFileDto } from './dto/update-file.dto';
-import { FileTypeE } from './file.interfaces';
+import { CreateFileDto, RemoveFileDto } from './dto/create-file.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ConditionType, FilesDocument } from './entities/file.entity';
@@ -13,7 +11,6 @@ import { ObjectId, UUID } from 'mongodb';
 import { FileHelper } from 'src/utilities/file';
 import { join } from 'path';
 import { ProductsService } from 'src/products/products.service';
-import { S3Client } from '@aws-sdk/client-s3';
 import Storage from 'src/services/Storage';
 import { StorageService } from './storage.service';
 import { Response } from 'express';
@@ -64,22 +61,20 @@ export class FilesService {
   }
 
   async update(id: string, file: Express.Multer.File) {
-    const result = await this.fileModel.findById(id);
-    if (!result) throw new NotFoundException();
-
-    const format = FileHelper.convetMimetypeToFormat(file.mimetype);
-
-    const newFileName = FileHelper.where('public').updateFile(
-      result.name,
-      format,
-      file.buffer,
-    );
-    await this.fileModel.findByIdAndUpdate(id, {
-      name: newFileName,
-    });
+    // await this.remove(id);
+    // // await this.create()
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} file`;
+  async remove(removeFileDto: RemoveFileDto, fileId: string) {
+    if (removeFileDto.entityType === 'product') {
+      const result = await this.productsService.popFileId(
+        removeFileDto.entityId,
+        fileId,
+      );
+      if (result.modifiedCount === 0)
+        throw new NotFoundException('No file with this ID was found');
+
+      await this.storageService.delete(fileId);
+    }
   }
 }

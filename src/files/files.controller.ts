@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -12,7 +13,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { CreateFileDto, FileValidationPipe } from './dto/create-file.dto';
+import {
+  CreateFileDto,
+  FileValidationPipe,
+  RemoveFileDto,
+} from './dto/create-file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RequestWithUser } from 'src/auth/interfaces/interface';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -54,5 +59,14 @@ export class FilesController {
     const url = await this.filesService.findOne(fileId);
 
     res.json({ url });
+  }
+  @Delete(':fileId')
+  async deleteOne(
+    @Body() removeFileDto: RemoveFileDto,
+    @Param('fileId') fileId: string,
+    @Res() res: Response,
+  ) {
+    await this.filesService.remove(removeFileDto, fileId);
+    return res.end();
   }
 }

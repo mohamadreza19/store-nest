@@ -1,3 +1,4 @@
+import { NotFound } from '@aws-sdk/client-s3';
 import {
   ArgumentsHost,
   ExceptionFilter,
@@ -58,6 +59,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof JsonWebTokenError) {
       message = exception.message;
       statusCode = HttpStatus.BAD_REQUEST;
+    } else if (exception instanceof NotFound) {
+      statusCode = HttpStatus.NOT_FOUND;
+      message = null;
     }
 
     response.status(statusCode).json({
