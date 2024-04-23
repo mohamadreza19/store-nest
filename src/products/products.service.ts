@@ -53,20 +53,20 @@ export class ProductsService {
       },
     );
   }
-  async popFileId(_id: string, uniuqeName: string) {
+  async pullFileId(entityId: string, elementId: string) {
     return await this.productModel.updateOne(
       {
-        _id,
+        _id: entityId,
       },
       {
         $pull: {
-          files: uniuqeName,
+          files: elementId,
         },
       },
     );
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
+  async update(id: number, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product`;
   }
 

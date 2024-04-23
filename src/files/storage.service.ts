@@ -75,6 +75,7 @@ export class StorageService {
       }),
     );
   }
+
   getFormatFromMimtype(fileMimetype: string) {
     return fileMimetype.split('/')[1];
   }

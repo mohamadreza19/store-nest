@@ -10,12 +10,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 
 import { FilesModule } from './files/files.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
-import { AuthController } from './auth/auth.controller';
-import { FilesController } from './files/files.controller';
-import { FilesService } from './files/files.service';
-import { AuthService } from './auth/auth.service';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -33,6 +28,7 @@ import { AuthService } from './auth/auth.service';
     UsersModule,
     ProductsModule,
     AuthModule,
+    CategoriesModule,
   ],
   // controllers: [AppController, AuthController, FilesController],
   // providers: [AppService, AuthService, FilesService],
