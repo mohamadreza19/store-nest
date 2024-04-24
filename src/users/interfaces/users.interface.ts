@@ -4,9 +4,6 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: 'admin' | 'user';
+  role: UserRoles;
 }
-export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
-}
+export type UserRoles = 'user' | 'admin';

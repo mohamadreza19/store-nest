@@ -34,7 +34,8 @@ export class FilesController {
 
   @UseGuards(AuthGuard)
   @Post()
-  @ApiBearerAuth()
+  @ApiBearerAuth('user')
+  @ApiBearerAuth('admin')
   @UseInterceptors(FileInterceptor('file'))
   async create(
     @Body() createFileDto: CreateFileDto,

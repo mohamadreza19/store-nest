@@ -18,6 +18,12 @@ export class Users {
   email: string;
 
   @Prop({
+    enum: ['user', 'admin'],
+    default: 'user',
+  })
+  role: string;
+
+  @Prop({
     default: Date.now,
   })
   createAt: string;
