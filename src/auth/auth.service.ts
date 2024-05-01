@@ -15,9 +15,10 @@ export class AuthService {
       username,
     });
 
-    if (!user) throw new NotFoundException('The username or password is wrong');
+    if (!user)
+      throw new BadRequestException(['The username or password is wrong']);
     if (!compareSync(password, user.password))
-      throw new NotFoundException('The username or password is wrong');
+      throw new BadRequestException(['The username or password is wrong']);
     const accessToken = this.generateAccessToken({
       id: user.id,
     });
@@ -32,9 +33,9 @@ export class AuthService {
     const userWithEmail = await this.usersService.findOne({ email });
 
     if (findedUser)
-      throw new BadRequestException('The username already exists');
+      throw new BadRequestException(['The username already exists']);
     if (userWithEmail)
-      throw new BadRequestException('The email already exists');
+      throw new BadRequestException(['The email already exists']);
 
     const hashedPassword = this.hashPassword(password);
     const createdUser = await this.usersService.create({
