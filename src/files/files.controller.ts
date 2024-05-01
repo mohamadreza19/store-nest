@@ -17,6 +17,7 @@ import {
   CreateFileDto,
   FileValidationPipe,
   RemoveFileDto,
+  UpdateFileDto,
 } from './dto/create-file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RequestWithUser } from 'src/auth/interfaces/interface';
@@ -33,7 +34,8 @@ export class FilesController {
 
   @UseGuards(AuthGuard)
   @Post()
-  @ApiBearerAuth()
+  @ApiBearerAuth('user')
+  @ApiBearerAuth('admin')
   @UseInterceptors(FileInterceptor('file'))
   async create(
     @Body() createFileDto: CreateFileDto,
@@ -47,11 +49,13 @@ export class FilesController {
   @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('file'))
   async update(
+    @Body() updateFileDto: UpdateFileDto,
     @Param('fileId') fileId: string,
     @UploadedFile(new FileValidationPipe()) file: Express.Multer.File,
     @Res() res: Response,
   ) {
-    const result = await this.filesService.update(fileId, file);
+    await this.filesService.update(fileId, updateFileDto, file);
+    res.end();
   }
 
   @Get(':fileId')

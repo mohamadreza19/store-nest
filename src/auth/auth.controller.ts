@@ -22,12 +22,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('sign-up')
-  async registerUser(@Body() user: SignInDto, @Res() res: Response) {
+  async registerUser(@Body() user: SignUpDto, @Res() res: Response) {
     const result = await this.authService.createUser(user);
     res.status(200).json(result);
   }
   @Post('sing-in')
-  async validateUser(@Body() user: SignUpDto, @Res() res: Response) {
+  async validateUser(@Body() user: SignInDto, @Res() res: Response) {
     const tokensObj = await this.authService.valdiateUser(
       user.username,
       user.password,

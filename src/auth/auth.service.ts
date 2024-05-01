@@ -4,7 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcrypt';
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
 
-import { SignInDto } from './dto/auth-credentials-dto';
+import { SignInDto, SignUpDto } from './dto/auth-credentials-dto';
 
 @Injectable()
 export class AuthService {
@@ -21,13 +21,14 @@ export class AuthService {
       throw new BadRequestException(['The username or password is wrong']);
     const accessToken = this.generateAccessToken({
       id: user.id,
+      role: user.role,
     });
     const refreshToken = this.generateRefreshToken({
       id: user.id,
     });
     return { accessToken, refreshToken };
   }
-  async createUser(user: SignInDto) {
+  async createUser(user: SignUpDto) {
     const { email, password, username } = user;
     const findedUser = await this.usersService.findOne({ username });
     const userWithEmail = await this.usersService.findOne({ email });

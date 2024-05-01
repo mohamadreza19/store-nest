@@ -22,7 +22,25 @@ async function bootstrap() {
     .setTitle('Store')
     .setDescription('The store API description')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'JWT Authorization',
+      },
+      'user',
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'JWT Authorization',
+      },
+      'admin',
+    )
+
     .build();
   const document = SwaggerModule.createDocument(app, Swaggerconfig);
   SwaggerModule.setup('api', app, document);
