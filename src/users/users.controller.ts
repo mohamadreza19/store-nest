@@ -18,11 +18,11 @@ import { ApiTags } from '@nestjs/swagger';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @Get()
-  async findAll(@Res() res: Response, @Req() req: Response) {
-    const user = await this.userService.findAll();
-    res.json(user);
-  }
+  // @Get()
+  // async findAll(@Res() res: Response, @Req() req: Response) {
+  //   const user = await this.userService.findAll();
+  //   res.json(user);
+  // }
   @Post()
   async create(@Body() user: CreateUserDto, @Res() res: Response) {
     const result = await this.userService.create(user);

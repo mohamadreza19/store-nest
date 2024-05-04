@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { UserRoles } from 'src/shared/interfaces';
 
 export interface IUser extends Document {
   name: string;
@@ -6,4 +7,3 @@ export interface IUser extends Document {
   password: string;
   role: UserRoles;
 }
-export type UserRoles = 'user' | 'admin';

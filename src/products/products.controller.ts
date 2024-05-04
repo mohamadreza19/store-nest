@@ -12,10 +12,11 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard, RoleGuard } from 'src/auth/auth.guard';
 import { User } from 'src/shared/decorators';
-import { IDecodedUser } from 'src/auth/interfaces/interface';
+
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { IDecodedUser, RequestWithUser } from 'src/shared/interfaces';
 
 @ApiTags('products')
 @Controller('products')
@@ -32,11 +33,12 @@ export class ProductsController {
     return await this.productsService.create(user.id, createProductDto);
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(RoleGuard)
+  @ApiBearerAuth('admin')
+  @ApiBearerAuth('user')
   @Get()
-  // @ApiBearerAuth()
-  findAll() {
-    return this.productsService.findAll();
+  async findAll(@User() user: IDecodedUser) {
+    return await this.productsService.findAll(user.role);
   }
 
   @Get(':id')

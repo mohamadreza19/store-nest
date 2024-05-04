@@ -20,7 +20,7 @@ import {
   UpdateFileDto,
 } from './dto/create-file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { RequestWithUser } from 'src/auth/interfaces/interface';
+
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Response } from 'express';
 import { join } from 'path';

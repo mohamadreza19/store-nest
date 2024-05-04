@@ -10,7 +10,7 @@ export class Products {
   @Prop({ required: true, unique: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, ref: 'users' })
   creator: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })

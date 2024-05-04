@@ -4,9 +4,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductsDocument } from './entities/product.entity';
-import { FilesDocument } from 'src/files/entities/file.entity';
-import { FilesService } from 'src/files/files.service';
-import { ObjectId } from 'mongodb';
+
+import { UserRoles } from 'src/shared/interfaces';
 
 @Injectable()
 export class ProductsService {
@@ -22,8 +21,9 @@ export class ProductsService {
     });
   }
 
-  findAll() {
-    return `This action returns all products`;
+  findAll(role: UserRoles) {
+    const populate = role == 'admin' ? 'creator' : null;
+    return this.productModel.find().populate(populate).exec();
   }
 
   async findOne(id: string) {
@@ -34,6 +34,9 @@ export class ProductsService {
     product;
 
     return product;
+  }
+  async countAll() {
+    return this.productModel.countDocuments();
   }
   async ProductFileLenth(_id: string) {
     const result = await this.productModel.findById(_id);

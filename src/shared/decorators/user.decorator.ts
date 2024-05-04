@@ -1,6 +1,6 @@
 // user.decorator.ts
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { RequestWithUser } from 'src/auth/interfaces/interface';
+import { RequestWithUser } from '../interfaces';
 
 /**
  * read populated user from req.user

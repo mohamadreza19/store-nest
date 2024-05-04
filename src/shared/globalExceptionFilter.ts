@@ -54,11 +54,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       }
     } else if (exception instanceof CastError) {
       statusCode = HttpStatus.BAD_REQUEST;
-      console.log(JSON.stringify(exception));
+
       message = `The format of ${exception.stringValue} has a problem`;
     } else if (exception instanceof JsonWebTokenError) {
       message = exception.message;
-      statusCode = HttpStatus.BAD_REQUEST;
+      statusCode = HttpStatus.UNAUTHORIZED;
     } else if (exception instanceof NotFound) {
       statusCode = HttpStatus.NOT_FOUND;
       message = null;

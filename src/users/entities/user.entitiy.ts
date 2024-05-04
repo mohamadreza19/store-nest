@@ -28,5 +28,12 @@ export class Users {
   })
   createAt: string;
 }
+
 export type UsersDocument = Users & Document;
-export const UsersEntitny = SchemaFactory.createForClass(Users);
+const UsersEntitny = SchemaFactory.createForClass(Users);
+
+UsersEntitny.index({
+  username: 'text',
+});
+
+export default UsersEntitny;

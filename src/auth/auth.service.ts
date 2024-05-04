@@ -57,7 +57,9 @@ export class AuthService {
     if (!token) throw new BadRequestException('Token is missing');
     const decoded = verify(token, process.env.REFRESH_KEY) as { id: string };
 
-    return this.generateAccessToken({ id: decoded.id });
+    const user = await this.usersService.findById(decoded.id);
+
+    return this.generateAccessToken({ id: user._id, role: user.role });
   }
   private hashPassword(password) {
     try {
