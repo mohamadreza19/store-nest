@@ -48,7 +48,7 @@ export class AdminGuard implements CanActivate {
   }
 }
 @Injectable()
-export class RoleGuard implements CanActivate {
+export class RolesGuard implements CanActivate {
   static role1 = 'user';
   static role2 = 'admin';
   canActivate(context: ExecutionContext): boolean | Promise<boolean> {

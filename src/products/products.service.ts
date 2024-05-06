@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductsDocument } from './entities/product.entity';
 
-import { UserRoles } from 'src/shared/interfaces';
+import { Sort, UserRoles } from 'src/shared/interfaces';
 
 @Injectable()
 export class ProductsService {
@@ -21,9 +21,41 @@ export class ProductsService {
     });
   }
 
-  findAll(role: UserRoles) {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+    sort: Sort = 'asc',
+    search: string = '',
+    role: UserRoles,
+  ) {
     const populate = role == 'admin' ? 'creator' : null;
-    return this.productModel.find().populate(populate).exec();
+    const sortOrder = sort === 'asc' ? -1 : 1;
+    const textSearch = search
+      ? { name: { $regex: search, $options: 'i' } }
+      : {};
+
+    const data = await this.productModel
+      .find(textSearch)
+      .find()
+      .sort({
+        createAt: sortOrder,
+      })
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .populate(populate)
+      .exec();
+    const total = await this.productModel.countDocuments(textSearch);
+
+    const pages = Math.ceil(total / limit);
+
+    return {
+      data,
+      meta: {
+        total,
+        pages,
+        page: Number(page),
+      },
+    };
   }
 
   async findOne(id: string) {
