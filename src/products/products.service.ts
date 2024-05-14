@@ -50,6 +50,7 @@ export class ProductsService {
       .limit(limit)
       .skip((page - 1) * limit)
       .populate(populate)
+      .populate('category')
       .exec();
     const total = await this.productModel.countDocuments(textSearch);
 
@@ -66,7 +67,7 @@ export class ProductsService {
   }
 
   async findOne(id: string) {
-    const product = await this.productModel.findById(id);
+    const product = await this.productModel.findById(id).populate('category');
 
     if (!product) throw new NotFoundException();
 

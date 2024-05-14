@@ -47,6 +47,7 @@ export class AuthService {
 
     const accessToken = this.generateAccessToken({
       id: createdUser._id,
+      role: createdUser.role,
     });
     const refreshToken = this.generateRefreshToken({
       id: createdUser._id,

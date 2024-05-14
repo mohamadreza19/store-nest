@@ -62,7 +62,7 @@ export class RolesGuard implements CanActivate {
 
     const decode = verify(token, process.env.SECRET_KEY) as IDecodedUser;
     request.user = decode;
-
+    console.log(decode);
     if (decode && decode.role === 'admin') return true;
     if (decode && decode.role === 'user') return true;
 

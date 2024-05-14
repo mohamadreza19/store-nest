@@ -11,8 +11,8 @@ export class Products {
   @Prop({ required: true, ref: 'users' })
   creator: mongoose.Schema.Types.ObjectId;
 
-  @Prop({ required: true })
-  categoryId: string;
+  @Prop({ required: true, ref: 'categories' })
+  category: string;
 
   @Prop({ required: true })
   price: number;

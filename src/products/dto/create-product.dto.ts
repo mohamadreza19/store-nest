@@ -22,5 +22,5 @@ export class CreateProductDto {
   off_precent: number;
 
   @ApiProperty()
-  categoryId: string;
+  category: string;
 }

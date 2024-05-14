@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -32,8 +32,12 @@ export class CategoriesService {
     return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string) {
+    const result = await this.categoryModel.findById(id);
+
+    if (!result) throw new NotFoundException();
+
+    return result;
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {
