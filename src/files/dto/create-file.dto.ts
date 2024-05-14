@@ -8,6 +8,7 @@ import { IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ObjectId } from 'mongoose';
 import { IsObjectId } from 'src/shared/decorators/is-object-id.decorator';
 import { FileTypeE } from '../file.interfaces';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Injectable()
 export class FileValidationPipe implements PipeTransform {
@@ -34,10 +35,12 @@ enum EntityType {
 
 export class CreateFileDto {
   @IsEnum(EntityType)
+  @ApiProperty()
   entityType: string;
 
   @IsNotEmpty()
   @IsObjectId()
+  @ApiProperty()
   entityId: string;
 }
 export class UpdateFileDto extends CreateFileDto {}

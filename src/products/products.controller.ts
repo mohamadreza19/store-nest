@@ -31,7 +31,7 @@ export class ProductsController {
 
   @UseGuards(AuthGuard)
   @Post()
-  @ApiBearerAuth()
+  @ApiBearerAuth('admin')
   async create(
     @User() user: IDecodedUser,
     @Body() createProductDto: CreateProductDto,
@@ -63,7 +63,7 @@ export class ProductsController {
     );
   }
 
-  @Get(':id')
+  @Get(':id') // Route with ID parameter
   async findOne(@Param('id') id: string) {
     return await this.productsService.findOne(id);
   }
@@ -75,7 +75,7 @@ export class ProductsController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  @ApiBearerAuth()
+  @ApiBearerAuth('admin')
   async remove(@Param('id') id: string) {
     return await this.productsService.removeById(id);
   }

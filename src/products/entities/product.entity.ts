@@ -1,11 +1,9 @@
 import { InjectModel, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Model, Types } from 'mongoose';
-import { FilesDocument, FilesEntitny } from 'src/files/entities/file.entity';
-import { FilesService } from 'src/files/files.service';
 
 @Schema()
 export class Products {
-  constructor(filesService: FilesService) {}
+  constructor() {}
 
   @Prop({ required: true, unique: true })
   name: string;
@@ -14,15 +12,18 @@ export class Products {
   creator: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })
+  categoryId: string;
+
+  @Prop({ required: true })
   price: number;
 
   @Prop({ type: [String], default: [] })
   files: string[];
 
-  @Prop()
+  @Prop({ defaul: 0 })
   off_price: number;
 
-  @Prop()
+  @Prop({ defaul: 0 })
   off_precent: number;
 
   @Prop({

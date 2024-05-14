@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,13 +11,15 @@ import { Model } from 'mongoose';
 import { ProductsDocument } from './entities/product.entity';
 
 import { Sort, UserRoles } from 'src/shared/interfaces';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectModel('products')
     private readonly productModel: Model<ProductsDocument>,
-    // private readonly filesService: FilesService,
+    @Inject(forwardRef(() => FilesService))
+    private readonly filesService: FilesService,
   ) {}
   create(creator: string, createProductDto: CreateProductDto) {
     return this.productModel.create({
@@ -106,9 +113,11 @@ export class ProductsService {
   }
 
   async removeById(_id: string) {
-    const result = await this.productModel.deleteOne({ _id });
+    // const result = await this.productModel.findById({ _id });
+    const result = await this.productModel.findOneAndDelete({ _id });
 
-    if (!result.deletedCount) throw new NotFoundException();
-    return result;
+    if (!result) throw new NotFoundException();
+    this.filesService.removeMany(result.files);
+    // return result;
   }
 }

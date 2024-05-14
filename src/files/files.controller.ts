@@ -24,7 +24,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Response } from 'express';
 import { join } from 'path';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 const PUBLICPATH = join(__dirname, '..', '..', 'asset', 'public');
 @ApiTags('files')
@@ -34,8 +40,29 @@ export class FilesController {
 
   @UseGuards(AuthGuard)
   @Post()
-  @ApiBearerAuth('user')
   @ApiBearerAuth('admin')
+  @ApiOperation({ summary: 'Upload file' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: CreateFileDto, description: 'file fields' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        entityType: {
+          type: 'string',
+          enum: ['product', 'user'],
+        },
+        entityId: {
+          type: 'string',
+        },
+        // Include other fields if necessary
+      },
+    },
+  })
   @UseInterceptors(FileInterceptor('file'))
   async create(
     @Body() createFileDto: CreateFileDto,
@@ -46,7 +73,7 @@ export class FilesController {
 
   @UseGuards(AuthGuard)
   @Put(':fileId')
-  @ApiBearerAuth()
+  @ApiBearerAuth('admin')
   @UseInterceptors(FileInterceptor('file'))
   async update(
     @Body() updateFileDto: UpdateFileDto,
@@ -64,6 +91,7 @@ export class FilesController {
 
     res.json({ url });
   }
+
   @Delete(':fileId')
   async deleteOne(
     @Body() removeFileDto: RemoveFileDto,

@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -18,6 +20,7 @@ import { ProductsService } from 'src/products/products.service';
 import Storage from 'src/services/Storage';
 import { StorageService } from './storage.service';
 import { Response } from 'express';
+import { StorageObjectKeys } from './file.interfaces';
 
 const LIMIT_FILE = 10;
 let LIMIT_FILE_ERROR = new BadRequestException('Entity has more than 10 files');
@@ -26,6 +29,7 @@ let LIMIT_FILE_ERROR = new BadRequestException('Entity has more than 10 files');
 export class FilesService {
   constructor(
     @InjectModel('files') private readonly fileModel: Model<FilesDocument>,
+    @Inject(forwardRef(() => ProductsService))
     private readonly productsService: ProductsService,
     private readonly storageService: StorageService,
   ) {}
@@ -97,5 +101,21 @@ export class FilesService {
 
       await this.storageService.delete(fileId);
     }
+  }
+  async removeMany(names: string[]) {
+    let outpuToStorageObjectKeys: StorageObjectKeys[] = [];
+
+    if (names.length > 0)
+      for (let name of names) {
+        outpuToStorageObjectKeys.push({
+          Key: name,
+        });
+      }
+
+    const result = await this.storageService.deleteMany(
+      outpuToStorageObjectKeys,
+    );
+
+    console.log(result);
   }
 }

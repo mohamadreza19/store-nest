@@ -7,11 +7,12 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AdminGuard, AuthGuard } from 'src/auth/auth.guard';
 import { ParseObjectIdPipe } from 'src/shared/decorators/parse-object-id.pipe';
 
@@ -28,8 +29,19 @@ export class CategoriesController {
   }
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  // @ApiQuery({ name: 'page', required: true, example: 1 })
+  // @ApiQuery({ name: 'limit', required: true, example: 10 })
+  @ApiQuery({
+    name: 'parentId',
+    required: false,
+    example: 'null | <parentId> ',
+  })
+  findAll(
+    // @Query('page') page: number,
+    // @Query('limit') limit: number,
+    @Query('parentId') parent_id: string,
+  ) {
+    return this.categoriesService.findAll(10, 1000000, parent_id);
   }
 
   @Get(':id')

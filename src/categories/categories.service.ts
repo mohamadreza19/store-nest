@@ -15,8 +15,21 @@ export class CategoriesService {
     return this.categoryModel.create(createCategoryDto);
   }
 
-  findAll() {
-    return this.categoryModel.find();
+  async findAll(page: number = 1, limit: number = 10, parent_id: string) {
+    const parent_idControled = parent_id
+      ? { parent_id: parent_id }
+      : { parent_id: null };
+    const data = await this.categoryModel
+
+      .find(parent_idControled)
+      .limit(limit)
+      // .skip((page - 1) * limit)
+      .exec();
+    // const total = await this.categoryModel.countDocuments(parent_idControled);
+
+    // const pages = Math.ceil(total / limit);
+
+    return data;
   }
 
   findOne(id: number) {

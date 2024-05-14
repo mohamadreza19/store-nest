@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
-import { FileTypeE } from './file.interfaces';
+import { FileTypeE, StorageObjectKeys } from './file.interfaces';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ConditionType, FilesDocument } from './entities/file.entity';
@@ -19,6 +19,7 @@ import {
   DeleteObjectCommand,
   S3Client,
   HeadObjectCommand,
+  DeleteObjectsCommand,
 } from '@aws-sdk/client-s3';
 import client from '@aws-sdk/client-s3';
 
@@ -57,6 +58,16 @@ export class StorageService {
     // const result = await this.s3.send(new GetObjectCommand(param));
     // console.log(result.Body);
     return process.env.STORAGE_ENDPOINT_TOFILE + '/' + name;
+  }
+  async deleteMany(names: StorageObjectKeys[]) {
+    return await this.s3.send(
+      new DeleteObjectsCommand({
+        Bucket: process.env.BUCKET,
+        Delete: {
+          Objects: names,
+        },
+      }),
+    );
   }
   async delete(name: string) {
     await this.s3.send(
