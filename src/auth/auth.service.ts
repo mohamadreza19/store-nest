@@ -5,10 +5,14 @@ import { compareSync, hashSync } from 'bcrypt';
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
 
 import { SignInDto, SignUpDto } from './dto/auth-credentials-dto';
+import { OtpService } from './ots.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly otpService: OtpService,
+  ) {}
 
   async valdiateUser(username: string, password: string) {
     const user = await this.usersService.findOne({
@@ -61,6 +65,45 @@ export class AuthService {
     const user = await this.usersService.findById(decoded.id);
 
     return this.generateAccessToken({ id: user._id, role: user.role });
+  }
+  async sendOtp(email: string) {
+    const result = await this.usersService.findOne({
+      email,
+    });
+
+    this.otpService.sendOtp(email);
+
+    if (result)
+      return {
+        message: `email send to ${email}`,
+        userRegistered: true,
+      };
+
+    return {
+      message: `email send to ${email}`,
+      userRegistered: false,
+    };
+  }
+
+  async verifyOtp(code: string) {
+    const result = await this.otpService.verifyOtp(code);
+
+    const user = await this.usersService.findOne({
+      email: result.email,
+    });
+
+    if (user) {
+      const accessToken = this.generateAccessToken({
+        id: user.id,
+        role: user.role,
+      });
+      const refreshToken = this.generateRefreshToken({
+        id: user.id,
+      });
+      return { accessToken, refreshToken };
+    }
+
+    return ['user need register'];
   }
   private hashPassword(password) {
     try {

@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AdminModule } from './admin/admin.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AdminModule } from './admin/admin.module';
     AuthModule,
     CategoriesModule,
     AdminModule,
+    MailModule,
   ],
   // controllers: [AppController, AuthController, FilesController],
   // providers: [AppService, AuthService, FilesService],

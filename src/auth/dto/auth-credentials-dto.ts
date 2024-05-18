@@ -6,6 +6,7 @@ import {
   Matches,
   IsEnum,
   IsEmail,
+  isString,
 } from 'class-validator';
 
 export class SignUpDto {
@@ -38,6 +39,17 @@ export class SignInDto {
   @IsString()
   @MinLength(8)
   readonly password: string;
+  // @Matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)
+}
+export class SendEmailDto {
+  @ApiProperty()
+  @IsEmail()
+  readonly email: string;
+}
+export class VerifyCodeDto {
+  @ApiProperty()
+  @IsString()
+  readonly code: string;
   // @Matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)
 }
 export class RefreshTokenDto {

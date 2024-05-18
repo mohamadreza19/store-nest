@@ -9,11 +9,12 @@ import {
   UseGuards,
   Req,
   Query,
+  Put,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { AuthGuard, RolesGuard } from 'src/auth/auth.guard';
+import { AdminGuard, AuthGuard, RolesGuard } from 'src/auth/auth.guard';
 import { User } from 'src/shared/decorators';
 
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -68,14 +69,24 @@ export class ProductsController {
     return await this.productsService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+  //   return this.productsService.update(+id, updateProductDto);
+  // }
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth('admin')
+  @Put(':id')
+  put(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @User() user: IDecodedUser,
+  ) {
+    return this.productsService.update(id, user, updateProductDto);
   }
 
-  @UseGuards(AuthGuard)
-  @Delete(':id')
+  @UseGuards(AdminGuard)
   @ApiBearerAuth('admin')
+  @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.productsService.removeById(id);
   }

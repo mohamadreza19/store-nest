@@ -12,14 +12,21 @@ import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import {
   RefreshTokenDto,
+  SendEmailDto,
   SignInDto,
   SignUpDto,
+  VerifyCodeDto,
 } from './dto/auth-credentials-dto';
 import { ApiTags } from '@nestjs/swagger';
+import { MailService } from 'src/mail/mail.service';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+
+    // private mailService: MailService,
+  ) {}
 
   @Post('sign-up')
   async registerUser(@Body() user: SignUpDto, @Res() res: Response) {
@@ -35,6 +42,16 @@ export class AuthController {
 
     res.status(200).json(tokensObj);
   }
+  @Post('send-code')
+  async sendCode(@Body() body: SendEmailDto) {
+    return await this.authService.sendOtp(body.email);
+  }
+
+  @Post('verify-code')
+  async verifyCode(@Body() body: VerifyCodeDto) {
+    return this.authService.verifyOtp(body.code);
+  }
+
   @Get('refresh-token/:token')
   async generateRefreshToken(
     @Param('token') refreshToken: string,

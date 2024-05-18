@@ -22,5 +22,6 @@ export class CreateProductDto {
   off_precent: number;
 
   @ApiProperty()
+  @IsObjectId()
   category: string;
 }

@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductsDocument } from './entities/product.entity';
 
-import { Sort, UserRoles } from 'src/shared/interfaces';
+import { IDecodedUser, Sort, UserRoles } from 'src/shared/interfaces';
 import { FilesService } from 'src/files/files.service';
 
 @Injectable()
@@ -71,8 +71,6 @@ export class ProductsService {
 
     if (!product) throw new NotFoundException();
 
-    product;
-
     return product;
   }
   async countAll() {
@@ -109,8 +107,14 @@ export class ProductsService {
     );
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(
+    id: string,
+    user: IDecodedUser,
+    updateProductDto: UpdateProductDto,
+  ) {
+    console.log(updateProductDto);
+    await this.productModel.updateOne({ _id: id }, updateProductDto);
+    return;
   }
 
   async removeById(_id: string) {
