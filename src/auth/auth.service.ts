@@ -108,7 +108,7 @@ export class AuthService {
         username: result.email,
         password: '',
       });
-
+      console.log(createUser);
       const accessToken = this.generateAccessToken({
         id: createUser.id,
         role: createUser.role,

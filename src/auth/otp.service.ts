@@ -35,6 +35,6 @@ export class OtpService {
     return result;
   }
   private generateCode() {
-    return String(Math.floor(Math.random() * 100000));
+    return String(Math.floor(100000 + Math.random() * 900000)).substring(1);
   }
 }

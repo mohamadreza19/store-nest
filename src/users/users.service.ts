@@ -38,7 +38,7 @@ export class UsersService {
     const total = await this.userModel.countDocuments(textSearch);
 
     const pages = Math.ceil(total / limit);
-    console.log(data);
+
     return {
       data,
       meta: {
