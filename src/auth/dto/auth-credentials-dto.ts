@@ -43,7 +43,7 @@ export class SignInDto {
 }
 export class SendEmailDto {
   @ApiProperty()
-  @IsEmail()
+  @IsEmail({}, { message: 'ایمیل نادرست است' })
   readonly email: string;
 }
 export class VerifyCodeDto {

@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { MailService } from 'src/mail/mail.service';
 import { generate } from 'otp-generator';
+import { generateOTP } from 'generate-one-time-password';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -15,10 +16,7 @@ export class OtpService {
   ) {}
 
   async sendOtp(email: string) {
-    const code = generate(5, {
-      digits: true,
-      specialChars: false,
-    });
+    const code = this.generateCode();
 
     await this.otpModel.create({
       code: code,
@@ -35,5 +33,8 @@ export class OtpService {
     if (!result) throw new BadRequestException(['gaven code is wrong']);
 
     return result;
+  }
+  private generateCode() {
+    return String(Math.floor(Math.random() * 100000));
   }
 }

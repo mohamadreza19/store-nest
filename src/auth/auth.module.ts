@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import { MailModule } from 'src/mail/mail.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OtpSchema } from './entities/opt.entity';
-import { OtpService } from './ots.service';
+import { OtpService } from './otp.service';
 
 @Module({
   imports: [

@@ -5,7 +5,7 @@ import { compareSync, hashSync } from 'bcrypt';
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
 
 import { SignInDto, SignUpDto } from './dto/auth-credentials-dto';
-import { OtpService } from './ots.service';
+import { OtpService } from './otp.service';
 
 @Injectable()
 export class AuthService {
@@ -100,10 +100,25 @@ export class AuthService {
       const refreshToken = this.generateRefreshToken({
         id: user.id,
       });
+
+      return { accessToken, refreshToken };
+    } else {
+      const createUser = await this.usersService.create({
+        email: result.email,
+        username: result.email,
+        password: '',
+      });
+
+      const accessToken = this.generateAccessToken({
+        id: createUser.id,
+        role: createUser.role,
+      });
+      const refreshToken = this.generateRefreshToken({
+        id: createUser.id,
+      });
+
       return { accessToken, refreshToken };
     }
-
-    return ['user need register'];
   }
   private hashPassword(password) {
     try {
