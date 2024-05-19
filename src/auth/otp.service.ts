@@ -35,6 +35,11 @@ export class OtpService {
     return result;
   }
   private generateCode() {
-    return String(Math.floor(100000 + Math.random() * 900000)).substring(1);
+    const length = 5;
+    let otp = '';
+    for (let i = 0; i < length; i++) {
+      otp += Math.floor(Math.random() * 10).toString();
+    }
+    return otp;
   }
 }
