@@ -20,6 +20,7 @@ import { User } from 'src/shared/decorators';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import {
   IDecodedUser,
+  List,
   RequestWithUser,
   Sort,
   SortEnum,
@@ -40,27 +41,37 @@ export class ProductsController {
     return await this.productsService.create(user.id, createProductDto);
   }
 
-  @UseGuards(RolesGuard)
-  @ApiBearerAuth('admin')
-  @ApiBearerAuth('user')
+  // @UseGuards(RolesGuard)
+  // @ApiBearerAuth('admin')
+  // @ApiBearerAuth('user')
   @Get()
   @ApiQuery({ name: 'page', required: true, example: 1 })
   @ApiQuery({ name: 'limit', required: true, example: 10 })
   @ApiQuery({ name: 'sort', required: false, enum: SortEnum, enumName: 'Sort' })
-  @ApiQuery({ name: 'search', required: false, example: 'foo' })
+  @ApiQuery({ name: 'category_id', required: false })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'minPrice', required: false, type: 'number' })
+  @ApiQuery({ name: 'maxPrice', required: false, type: 'number' })
   async findAll(
     @User() user: IDecodedUser,
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('sort') sort: Sort,
     @Query('search') search: string,
+    @Query('category_id') category: string,
+    @Query('minPrice') minPrice: number,
+    @Query('maxPrice') maxPrice: number,
   ) {
+    const role = user ? user.role : undefined;
     return await this.productsService.findAll(
       page,
       limit,
       sort,
       search,
-      user.role,
+      category,
+      minPrice,
+      maxPrice,
+      role,
     );
   }
 

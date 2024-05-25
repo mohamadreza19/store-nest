@@ -5,8 +5,8 @@ export class Category {
   @Prop({ required: true, unique: true })
   name: string;
 
-  // @Prop({ required: false, default: null })
-  // parentId: string;
+  @Prop({ required: false, default: null })
+  parent_id: string;
 }
 
 export type CategoriesDocument = Category & Document;

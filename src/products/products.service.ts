@@ -33,26 +33,44 @@ export class ProductsService {
     limit: number = 10,
     sort: Sort = 'asc',
     search: string = '',
+    category: string,
+    minPrice: number,
+    maxPrice: number,
     role: UserRoles,
   ) {
-    const populate = role == 'admin' ? 'creator' : null;
+    let query: any = {};
+    const populate = role === 'admin' ? 'creator' : null;
+    const selectCreator = role === 'admin' ? 'creator' : '-creator';
     const sortOrder = sort === 'asc' ? -1 : 1;
-    const textSearch = search
-      ? { name: { $regex: search, $options: 'i' } }
-      : {};
 
+    if (search) {
+      query.name = { $regex: search, $options: 'i' };
+    }
+    if (category) {
+      query.category = category;
+    }
+    if (minPrice && !maxPrice) {
+      query.price = { $gte: minPrice };
+    }
+    if (maxPrice && !minPrice) {
+      query.price = { $lte: maxPrice };
+    }
+    if (minPrice && maxPrice) {
+      query.price = { $gte: minPrice, $lte: maxPrice };
+    }
     const data = await this.productModel
-      .find(textSearch)
+      .find(query)
       .find()
       .sort({
         createAt: sortOrder,
       })
       .limit(limit)
       .skip((page - 1) * limit)
+      .select(selectCreator)
       .populate(populate)
       .populate('category')
       .exec();
-    const total = await this.productModel.countDocuments(textSearch);
+    const total = await this.productModel.countDocuments(query);
 
     const pages = Math.ceil(total / limit);
 

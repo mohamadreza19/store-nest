@@ -12,6 +12,7 @@ export class CategoriesService {
     private readonly categoryModel: Model<CategoriesDocument>,
   ) {}
   create(createCategoryDto: CreateCategoryDto) {
+    console.log(createCategoryDto);
     return this.categoryModel.create(createCategoryDto);
   }
 

@@ -9,5 +9,5 @@ export class CreateCategoryDto {
   @ApiProperty({ required: false, examples: [null, 'foo'] })
   @IsString()
   @IsOptional()
-  parentId?: string;
+  parent_id?: string;
 }

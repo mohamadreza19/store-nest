@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { JsonWebTokenError } from 'jsonwebtoken';
-import { MongoServerError } from 'mongodb';
+import { MongoError, MongoServerError } from 'mongodb';
 import { Error as MongoseError } from 'mongoose';
 const { CastError } = MongoseError;
 
@@ -25,26 +25,27 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let code: number = null;
     let message: string | object = 'Internal server error';
     let addetinal = null;
+
     console.log(exception);
     if (exception instanceof HttpException) {
       const responseErr = exception.getResponse() as {
         message: string | object;
       };
-      responseErr;
-      console.log(responseErr);
+
       // if
       console.log(JSON.stringify(exception));
       console.log('is');
       statusCode = exception.getStatus();
       message = responseErr.message;
-    } else if (exception instanceof MongoServerError) {
+    } else if ((exception as any).name == MongoServerError.name) {
+      const error = exception as MongoServerError;
       statusCode = HttpStatus.CONFLICT;
 
-      switch (exception.code) {
+      switch (error.code) {
         case 11000:
           message = `The value already exists. Please choose a different`;
-          code = exception.code;
-          addetinal = exception.keyValue;
+          code = error.code;
+          addetinal = error.keyValue;
 
           break;
 

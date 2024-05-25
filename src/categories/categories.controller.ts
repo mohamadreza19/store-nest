@@ -32,14 +32,14 @@ export class CategoriesController {
   // @ApiQuery({ name: 'page', required: true, example: 1 })
   // @ApiQuery({ name: 'limit', required: true, example: 10 })
   @ApiQuery({
-    name: 'parentId',
+    name: 'parent_id',
     required: false,
-    example: 'null | <parentId> ',
+    example: 'null | <parent_id> ',
   })
   findAll(
     // @Query('page') page: number,
     // @Query('limit') limit: number,
-    @Query('parentId') parent_id: string,
+    @Query('parent_id') parent_id: string,
   ) {
     return this.categoriesService.findAll(10, 1000000, parent_id);
   }
