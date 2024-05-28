@@ -62,8 +62,29 @@ export class RolesGuard implements CanActivate {
 
     const decode = verify(token, process.env.SECRET_KEY) as IDecodedUser;
     request.user = decode;
-    console.log(decode);
+
     if (decode && decode.role === 'admin') return true;
+    if (decode && decode.role === 'user') return true;
+
+    return true;
+  }
+}
+@Injectable()
+export class UserGuard implements CanActivate {
+  static role1 = 'user';
+  static role2 = 'admin';
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> {
+    const request: RequestWithUser = context.switchToHttp().getRequest();
+
+    const bearerToken = request.headers.authorization;
+    if (!bearerToken)
+      throw new UnauthorizedException('Authorization header is missing');
+
+    const token = bearerToken.split(' ')[1];
+
+    const decode = verify(token, process.env.SECRET_KEY) as IDecodedUser;
+    request.user = decode;
+
     if (decode && decode.role === 'user') return true;
 
     return true;

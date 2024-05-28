@@ -8,11 +8,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { IUser } from './interfaces/users.interface';
 import { Sort } from 'src/shared/interfaces';
 import { Users } from './users.schema';
+import { CreateProfileDto } from './dto/create-profile.dto';
+import { ProfilesDocument } from './entities/profiles.entitiy';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel('users') private readonly userModel: Model<UsersDocument>,
+    @InjectModel('profiles')
+    private readonly profileModel: Model<ProfilesDocument>,
   ) {}
 
   async findAll(
@@ -55,14 +60,26 @@ export class UsersService {
     return this.userModel.findOne(data);
   }
   async findById(id: string) {
-    const result = await this.userModel.findById(id).exec();
+    const result = await this.userModel.findById(id);
 
     if (!result) throw new NotFoundException();
 
     return result;
   }
   async create(user: CreateUserDto) {
-    return this.userModel.create(user);
+    const result = await this.userModel.create(user);
+    await this.createProfile(result._id);
+    return result;
+  }
+  private async createProfile(userId: ObjectId) {
+    await this.profileModel.create({
+      userId,
+    });
+  }
+  async getProfileByUserId(userId: string) {
+    return this.profileModel.findOne({
+      userId,
+    });
   }
   async updateById(id: string, user: CreateUserDto) {
     return this.userModel.findByIdAndUpdate(id, user);
