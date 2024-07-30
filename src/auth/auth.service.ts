@@ -129,10 +129,17 @@ export class AuthService {
     }
   }
   private generateAccessToken(payload: object) {
+    var date = new Date();
+    const Second = date.setDate(date.getDate() + 1);
     try {
-      return sign(payload, process.env.SECRET_KEY, {
-        expiresIn: '1d',
+      const token = sign(payload, process.env.SECRET_KEY, {
+        expiresIn: Second,
       });
+
+      return {
+        token,
+        expiresIn: Second,
+      };
     } catch (error) {
       console.log(error);
     }
